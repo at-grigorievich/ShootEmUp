@@ -6,8 +6,8 @@ namespace ShootEmUp
     {
         public void FinishGame()
         {
-            Debug.Log("Game over!");
-            Time.timeScale = 0;
+            //Debug.Log("Game over!");
+            //Time.timeScale = 0;
         }
     }
 }
