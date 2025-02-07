@@ -5,6 +5,7 @@ namespace ShootEmUp
         CHARACTER = 10,
         ENEMY = 11,
         ENEMY_BULLET = 13,
-        PLAYER_BULLET = 14
+        PLAYER_BULLET = 14,
+        DISABLED = 15
     }
 }

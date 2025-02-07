@@ -1,23 +1,26 @@
-using UnityEngine;
-
 namespace ShootEmUp
 {
-    public sealed class CharacterController : MonoBehaviour
+    public sealed class CharacterController
     {
         private readonly CharacterView _view;
 
-        private readonly IHpEditor _hpEditor;
+        private readonly InputService _inputService;
 
-        [SerializeField] private GameManager gameManager;
-        [SerializeField] private BulletSystem _bulletSystem;
-        [SerializeField] private BulletConfig _bulletConfig;
+        private readonly BulletSystem _bulletSystem;
         
-        public bool _fireRequired;
+        private readonly IHpEditor _hpEditor;
+        
+        //[SerializeField] private GameManager gameManager;
+        //[SerializeField] private BulletSystem _bulletSystem;
+        //[SerializeField] private BulletConfig _bulletConfig;
 
-        public CharacterController(CharacterView view)
+        public CharacterController(CharacterView view, InputService inputService, BulletSystem bulletSystem)
         {
             _view = view;
             _hpEditor = new HitPointsService(_view.HitPointsComponent);
+            _bulletSystem = bulletSystem;
+        
+            _inputService = inputService;
         }
 
         public void SetActive(bool isActive)
@@ -25,39 +28,29 @@ namespace ShootEmUp
             if(isActive == true)
             {
                 _hpEditor.OnHpEmpty += OnCharacterDeath;
+                _inputService.OnFiredClicked += OnFlyBullet;
             }
             else
             {
                 _hpEditor.OnHpEmpty -= OnCharacterDeath;
+                _inputService.OnFiredClicked -= OnFlyBullet;
             }
         }
 
         private void OnCharacterDeath()
         {
-            this.gameManager.FinishGame();
+            //this.gameManager.FinishGame();
         }
 
-        private void FixedUpdate()
+        public void Update()
         {
-            if (this._fireRequired)
-            {
-                this.OnFlyBullet();
-                this._fireRequired = false;
-            }
+            _view.Move(_inputService.InpuAxis);
         }
 
         private void OnFlyBullet()
         {
-            //var weapon = this.character.GetComponent<WeaponComponent>();
-            _bulletSystem.FlyBulletByArgs(new BulletSystem.Args
-            {
-                isPlayer = true,
-                physicsLayer = (int) this._bulletConfig.physicsLayer,
-                color = this._bulletConfig.color,
-                damage = this._bulletConfig.damage,
-                //position = weapon.Position,
-                //velocity = weapon.Rotation * Vector3.up * this._bulletConfig.speed
-            });
+            var weapon = _view.WeaponComponent;
+            weapon.Shoot(_bulletSystem, true);
         }
     }
 }

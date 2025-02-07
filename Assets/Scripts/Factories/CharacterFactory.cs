@@ -8,9 +8,9 @@ namespace ShootEmUp
     {
         [SerializeField] private CharacterView view;
 
-        public CharacterController Create()
+        public CharacterController Create(InputService inputService, BulletSystem bulletSystem)
         {
-            CharacterController characterController = new CharacterController(view);
+            CharacterController characterController = new CharacterController(view, inputService, bulletSystem);
             return characterController;
         }
     }
