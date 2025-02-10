@@ -8,7 +8,7 @@ namespace ShootEmUp
         [SerializeField] private WeaponComponentData weaponComponentData;
 
         [SerializeField] private new Rigidbody2D rigidbody2D;
-        [SerializeField] private float moveSpeed;
+        [SerializeField] private float moveSpeed; //TODO: create config in the future...
 
         private IMoveableService _moveService;
         
@@ -18,6 +18,7 @@ namespace ShootEmUp
         private void Awake()
         {
             _moveService = new MoveByRigidbodyVelocity(rigidbody2D);
+            
             HitPointsComponent = hitPointsComponentData.Create();
             WeaponComponent = weaponComponentData.Create();
         }

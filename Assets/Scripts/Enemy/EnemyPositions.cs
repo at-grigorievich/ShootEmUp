@@ -12,12 +12,12 @@ namespace ShootEmUp
 
         public Transform RandomSpawnPosition()
         {
-            return this.RandomTransform(this.spawnPositions);
+            return RandomTransform(spawnPositions);
         }
 
         public Transform RandomAttackPosition()
         {
-            return this.RandomTransform(this.attackPositions);
+            return RandomTransform(attackPositions);
         }
 
         private Transform RandomTransform(Transform[] transforms)

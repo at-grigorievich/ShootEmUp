@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public class GenericPool<T> where T: MonoBehaviour
+    public abstract class GenericPool<T,K>
     {
-        private readonly Transform _root;
-        private readonly Queue<T> _poolQueue;
+        protected readonly Transform _root;
+        protected readonly Queue<T> _poolQueue;
 
-        private readonly T _instance;
-        private readonly int _poolLength;
+        protected readonly K _instance;
+        protected readonly int _poolLength;
 
         public bool IsEmpty => _poolQueue != null ? _poolQueue.Count == 0 : true;
 
-        public GenericPool(T instance, int count, Transform root)
+        public GenericPool(K instance, int count, Transform root)
         {
             _instance = instance;
             _root = root;
@@ -26,7 +26,7 @@ namespace ShootEmUp
         {
             for(int i = 0; i < _poolLength; i++)
             {
-                T instance = GameObject.Instantiate(_instance, _root);
+                T instance = CreateInstance();
                 Post(instance);
             }
         }
@@ -35,18 +35,17 @@ namespace ShootEmUp
         {
             if (_poolQueue.TryDequeue(out T element) == false)
             {
-                element = GameObject.Instantiate(_instance);
-            }
-            
-            element.transform.SetParent(null);
+                element = CreateInstance();
+            }  
 
             return element;
         }
 
         public virtual void Post(T element)
         {
-            element.transform.SetParent(_root);
             _poolQueue.Enqueue(element);
         }
+
+        protected abstract T CreateInstance();
     }
 }

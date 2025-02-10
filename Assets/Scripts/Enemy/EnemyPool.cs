@@ -3,59 +3,65 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemyPool : MonoBehaviour
+
+    public sealed class EnemyPool:GenericPool<EnemyController, EnemyView>
     {
-        [Header("Spawn")]
-        [SerializeField]
-        private EnemyPositions enemyPositions;
+        private readonly EnemyPositions _enemyPositions;
 
-        [SerializeField]
-        private GameObject character;
+        private readonly BulletSystem _bulletSystem;
+        private readonly ITargeteable _targeteable;
 
-        [SerializeField]
-        private Transform worldTransform;
-
-        [Header("Pool")]
-        [SerializeField]
-        private Transform container;
-
-        [SerializeField]
-        private GameObject prefab;
-
-        private readonly Queue<GameObject> enemyPool = new();
-        
-        private void Awake()
+        public EnemyPool(EnemyPositions enemyPositions, ITargeteable target, BulletSystem bulletSystem,
+            EnemyView instance, int count, Transform root) 
+            : base(instance, count, root)
         {
-            for (var i = 0; i < 7; i++)
-            {
-                var enemy = Instantiate(this.prefab, this.container);
-                this.enemyPool.Enqueue(enemy);
-            }
+            _enemyPositions = enemyPositions;
+            _targeteable = target;
+            _bulletSystem = bulletSystem;
         }
 
-        public GameObject SpawnEnemy()
+        protected override EnemyController CreateInstance()
         {
-            if (!this.enemyPool.TryDequeue(out var enemy))
+            EnemyView enemyView = GameObject.Instantiate(_instance, _root);
+            return new EnemyController(enemyView, _bulletSystem);
+        }
+
+        public HashSet<EnemyController> GetMany(int needCount)
+        {
+            HashSet<EnemyController> _enemies = new HashSet<EnemyController>();
+            for(int i = 0; i < needCount; i++)
             {
-                return null;
+                _enemies.Add(Get());
             }
 
-            enemy.transform.SetParent(this.worldTransform);
+            return _enemies;
+        }
 
-            var spawnPosition = this.enemyPositions.RandomSpawnPosition();
-            enemy.transform.position = spawnPosition.position;
+        public override EnemyController Get()
+        {
+            EnemyController enemyController = base.Get();
             
-            var attackPosition = this.enemyPositions.RandomAttackPosition();
-            enemy.GetComponent<EnemyMoveAgent>().SetDestination(attackPosition.position);
+            enemyController.SetParent(null);
 
-            enemy.GetComponent<EnemyAttackAgent>().SetTarget(this.character);
-            return enemy;
+            var position = _enemyPositions.RandomSpawnPosition().position;
+
+            enemyController.SetPosition(position);
+            enemyController.SetDestination(_enemyPositions.RandomAttackPosition().position);
+
+            enemyController.SetTarget(_targeteable);
+
+            enemyController.SetActive(true);
+
+            return enemyController;
         }
 
-        public void UnspawnEnemy(GameObject enemy)
+        public override void Post(EnemyController element)
         {
-            enemy.transform.SetParent(this.container);
-            this.enemyPool.Enqueue(enemy);
+            base.Post(element);
+
+            element.SetParent(_root);
+            element.SetActive(false);
         }
+
     }
 }

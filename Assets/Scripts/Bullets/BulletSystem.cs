@@ -5,7 +5,7 @@ namespace ShootEmUp
 {
     public sealed class BulletSystem
     {
-        private readonly GenericPool<BulletView> _pool;
+        private readonly BulletPool _pool;
         private readonly LevelBounds _levelBounds;
 
         private readonly HashSet<BulletView> _activeBullets;
@@ -17,7 +17,7 @@ namespace ShootEmUp
             _levelBounds = levelBounds;
         }
 
-        public void FixedUpdate()
+        public void Update()
         {
             HashSet<BulletView> outOfBounds = new HashSet<BulletView>();
 

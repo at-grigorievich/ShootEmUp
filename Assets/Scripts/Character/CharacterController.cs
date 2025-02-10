@@ -1,6 +1,13 @@
+using UnityEngine;
+
 namespace ShootEmUp
 {
-    public sealed class CharacterController
+    public interface ITargeteable
+    {
+        Vector2 Position {get;}
+    }
+
+    public sealed class CharacterController: ITargeteable
     {
         private readonly CharacterView _view;
 
@@ -9,10 +16,11 @@ namespace ShootEmUp
         private readonly BulletSystem _bulletSystem;
         
         private readonly IHpEditor _hpEditor;
-        
+
+        public Vector2 Position => _view.transform.position;
+
         //[SerializeField] private GameManager gameManager;
-        //[SerializeField] private BulletSystem _bulletSystem;
-        //[SerializeField] private BulletConfig _bulletConfig;
+
 
         public CharacterController(CharacterView view, InputService inputService, BulletSystem bulletSystem)
         {

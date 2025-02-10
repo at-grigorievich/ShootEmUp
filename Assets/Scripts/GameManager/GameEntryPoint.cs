@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -7,11 +8,13 @@ namespace ShootEmUp
         [SerializeField] private CharacterFactory characterFactory;
 
         [SerializeField] private BulletSystemFactory bulletSystemFactory;
+        [SerializeField] private EnemySystemFactory enemySystemFactory;
 
         private InputService _inputService;
 
         private CharacterController _characterController;
         private BulletSystem _bulletSystem;
+        private EnemySystem _enemySystem;
 
         private void Awake()
         {
@@ -22,7 +25,8 @@ namespace ShootEmUp
         {
             _bulletSystem = bulletSystemFactory.Create();
             _characterController = characterFactory.Create(_inputService, _bulletSystem);
-            
+            _enemySystem = enemySystemFactory.Create(_characterController, _bulletSystem);
+
             StartGame();
         }
 
@@ -30,17 +34,26 @@ namespace ShootEmUp
         {
             _inputService.Update();
             _characterController.Update();
+            _bulletSystem.Update();
         }
 
         private void FixedUpdate()
         {
-            _bulletSystem.FixedUpdate();
+            _enemySystem.FixedUpdate();
         }
 
         private void StartGame()
         {
             _characterController.SetActive(true);
             _bulletSystem.SetActive(true);
+            
+            StartCoroutine(StartEnemySystemWithDelay(1f));
+        }
+
+        private IEnumerator StartEnemySystemWithDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            _enemySystem.SetActive(true);
         }
 
         [ContextMenu("Finish Game")]

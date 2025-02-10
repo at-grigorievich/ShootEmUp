@@ -9,7 +9,7 @@ namespace ShootEmUp
             get { return this.isReached; }
         }
 
-        [SerializeField] private MoveComponent moveComponent;
+        //[SerializeField] private MoveComponent moveComponent;
 
         private Vector2 destination;
 
@@ -36,7 +36,7 @@ namespace ShootEmUp
             }
 
             var direction = vector.normalized * Time.fixedDeltaTime;
-            this.moveComponent.MoveByRigidbodyVelocity(direction);
+            //this.moveComponent.MoveByRigidbodyVelocity(direction);
         }
     }
 }
