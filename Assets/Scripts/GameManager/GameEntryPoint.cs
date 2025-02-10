@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class GameEntryPoint: MonoBehaviour
+    public sealed class GameEntryPoint : MonoBehaviour
     {
         [SerializeField] private CharacterFactory characterFactory;
 
@@ -46,14 +46,18 @@ namespace ShootEmUp
         {
             _characterController.SetActive(true);
             _bulletSystem.SetActive(true);
-            
+            _enemySystem.SetActive(true);
+
             StartCoroutine(StartEnemySystemWithDelay(1f));
         }
 
         private IEnumerator StartEnemySystemWithDelay(float delay)
         {
-            yield return new WaitForSeconds(delay);
-            _enemySystem.SetActive(true);
+            for (int i = 0; i < _enemySystem.NeedCount; i++)
+            {
+                yield return new WaitForSeconds(delay);
+                _enemySystem.AddEnemy();
+            }
         }
 
         [ContextMenu("Finish Game")]

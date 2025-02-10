@@ -52,7 +52,10 @@ namespace ShootEmUp
 
         public void Update()
         {
-            _view.Move(_inputService.InpuAxis);
+            Vector2 direction = _inputService.InpuAxis;
+            direction.y = 0f;
+
+            _view.Move(direction);
         }
 
         private void OnFlyBullet()

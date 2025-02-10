@@ -12,6 +12,8 @@ namespace ShootEmUp
         private readonly int _needCount;
 
         private HashSet<EnemyController> _activeEnemies;
+        
+        public int NeedCount => _needCount;
 
         public EnemySystem(EnemyPositions enemyPositions, ITargeteable target, BulletSystem bulletSystem,
             EnemyView enemyInstance,int needCount, int initialCount, Transform root)
@@ -54,8 +56,6 @@ namespace ShootEmUp
                 {
                     _pool.CreatePool();
                 }
-
-                _activeEnemies = _pool.GetMany(_needCount);
             }
             else
             {
@@ -64,6 +64,12 @@ namespace ShootEmUp
                     RemoveEnemy(enemy);
                 }
             }
+        }
+
+        public void AddEnemy()
+        {
+            EnemyController newEnemy = _pool.Get();
+            _activeEnemies.Add(newEnemy);
         }
 
         private void RemoveEnemy(EnemyController enemyController)
