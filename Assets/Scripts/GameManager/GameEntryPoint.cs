@@ -48,26 +48,29 @@ namespace ShootEmUp
             _bulletSystem.SetActive(true);
             _enemySystem.SetActive(true);
 
-            StartCoroutine(StartEnemySystemWithDelay(1f));
+            StartCoroutine(SpawnEnemiesWithDelay(1f));
+
+            _characterController.OnDestroyed += FinishGame;
         }
 
-        private IEnumerator StartEnemySystemWithDelay(float delay)
+        private IEnumerator SpawnEnemiesWithDelay(float delay)
         {
-            for (int i = 0; i < _enemySystem.NeedCount; i++)
+            while(true)
             {
                 yield return new WaitForSeconds(delay);
                 _enemySystem.AddEnemy();
             }
         }
 
-        [ContextMenu("Finish Game")]
         private void FinishGame()
         {
-            Debug.Log("Game over!");
             Time.timeScale = 0;
 
             _characterController.SetActive(false);
             _bulletSystem.SetActive(false);
+            _enemySystem.SetActive(false);
+
+            Debug.Log("finish game");
         }
     }
 }

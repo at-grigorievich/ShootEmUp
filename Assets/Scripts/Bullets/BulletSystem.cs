@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -9,7 +10,7 @@ namespace ShootEmUp
         private readonly LevelBounds _levelBounds;
 
         private readonly HashSet<BulletView> _activeBullets;
-        
+
         public BulletSystem(BulletView instance, int initialCount, Transform root, LevelBounds levelBounds)
         {
             _pool = new BulletPool(instance, initialCount, root);
@@ -44,7 +45,7 @@ namespace ShootEmUp
             }
             else
             {
-                foreach(var bullet in _activeBullets)
+                foreach(var bullet in _activeBullets.ToArray())
                 {
                     RemoveBullet(bullet);
                 }
@@ -64,9 +65,8 @@ namespace ShootEmUp
         
         private void OnBulletCollision(BulletView bullet, Collision2D collision)
         {
-            Debug.Log("collision");
-            //BulletUtils.DealDamage(bullet, collision.gameObject);
-            //this.RemoveBullet(bullet);
+            BulletUtils.DealDamage(bullet, collision.gameObject);
+            RemoveBullet(bullet);
         }
 
         private void RemoveBullet(BulletView bullet)

@@ -7,7 +7,6 @@ namespace ShootEmUp
     public sealed class EnemySystemFactory
     {
         [SerializeField] private EnemyView enemyInstance;
-        [SerializeField] private int needEnemyCount;
         [SerializeField] private int initialEnemyCount;
         [SerializeField] private EnemyPositions enemyPositions;
         [SerializeField] private Transform enemiesParent;
@@ -15,7 +14,7 @@ namespace ShootEmUp
         public EnemySystem Create(ITargeteable target, BulletSystem bulletSystem)
         {
             return new EnemySystem(enemyPositions, target, bulletSystem,
-                                     enemyInstance, needEnemyCount, initialEnemyCount, enemiesParent);
+                                     enemyInstance, initialEnemyCount, enemiesParent);
         }
     }
 }

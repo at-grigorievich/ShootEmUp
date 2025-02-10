@@ -62,6 +62,5 @@ namespace ShootEmUp
             element.SetParent(_root);
             element.SetActive(false);
         }
-
     }
 }

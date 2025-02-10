@@ -21,10 +21,5 @@ namespace ShootEmUp
                 OnFiredClicked?.Invoke();
             }
         }
-        
-        private void FixedUpdate()
-        {
-            //this.character.GetComponent<MoveComponent>().MoveByRigidbodyVelocity(new Vector2(this.HorizontalDirection, 0) * Time.fixedDeltaTime);
-        }
     }
 }

@@ -30,7 +30,7 @@ namespace ShootEmUp
         {
             _data.TakeDamage(damage);
 
-            if(_data.IsHitPointsExists() == true)
+            if(_data.IsHitPointsExists() == false)
             {
                 OnHpEmpty?.Invoke();
             }

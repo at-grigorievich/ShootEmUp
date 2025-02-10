@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -11,57 +12,45 @@ namespace ShootEmUp
     {
         private readonly CharacterView _view;
 
-        private readonly InputService _inputService;
-
-        private readonly BulletSystem _bulletSystem;
-        
+        private readonly IWeapon _weapon;
         private readonly IHpEditor _hpEditor;
+        private readonly IMoveableService _moveService;
 
         public Vector2 Position => _view.transform.position;
 
-        //[SerializeField] private GameManager gameManager;
-
+        public event Action OnDestroyed
+        {
+            add => _hpEditor.OnHpEmpty += value;
+            remove => _hpEditor.OnHpEmpty -= value;
+        }
 
         public CharacterController(CharacterView view, InputService inputService, BulletSystem bulletSystem)
         {
             _view = view;
+
+            _moveService = _view.CreateMovement(inputService);
             _hpEditor = new HitPointsService(_view.HitPointsComponent);
-            _bulletSystem = bulletSystem;
-        
-            _inputService = inputService;
+            _weapon = new InputWeaponService(_view.WeaponComponentData, bulletSystem, inputService, true);
         }
 
         public void SetActive(bool isActive)
         {
+            _view.SetActive(isActive);
+            _weapon.SetActive(isActive);
+
             if(isActive == true)
             {
-                _hpEditor.OnHpEmpty += OnCharacterDeath;
-                _inputService.OnFiredClicked += OnFlyBullet;
+                _view.OnDamaged += _hpEditor.TakeDamage;
             }
             else
             {
-                _hpEditor.OnHpEmpty -= OnCharacterDeath;
-                _inputService.OnFiredClicked -= OnFlyBullet;
+                _view.OnDamaged -= _hpEditor.TakeDamage;
             }
-        }
-
-        private void OnCharacterDeath()
-        {
-            //this.gameManager.FinishGame();
         }
 
         public void Update()
         {
-            Vector2 direction = _inputService.InpuAxis;
-            direction.y = 0f;
-
-            _view.Move(direction);
-        }
-
-        private void OnFlyBullet()
-        {
-            var weapon = _view.WeaponComponent;
-            weapon.Shoot(_bulletSystem, true);
+            _moveService.Move();
         }
     }
 }

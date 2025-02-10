@@ -31,14 +31,19 @@ namespace ShootEmUp
 
         public void Shoot(BulletSystem bulletSystem, bool isPlayer)
         {
+            Shoot(bulletSystem, Position, Rotation * Vector3.up * _bulletConfig.speed, isPlayer);
+        }
+
+        public void Shoot(BulletSystem bulletSystem, Vector2 spawnPosition, Vector2 velocity, bool isPlayer)
+        {
             bulletSystem.FlyBulletByArgs(new BulletSystem.BulletDataArgs
             {
                 IsPlayer = isPlayer,
                 PhysicsLayer = (int)_bulletConfig.physicsLayer,
                 Color = _bulletConfig.color,
                 Damage = _bulletConfig.damage,
-                Position = Position,
-                Velocity = Rotation * Vector3.up * _bulletConfig.speed
+                Position = spawnPosition,
+                Velocity = velocity
             });
         }
     }
