@@ -24,12 +24,14 @@ namespace ShootEmUp
         {
             spriteRenderer.enabled = isActive;
             
+            SetSimulatedStatus(isActive);
+            
             if(isActive == false)
             {
                 gameObject.layer = (int)PhysicsLayer.DISABLED;
             }
         }
-
+        
         public void UpdateData(BulletSystem.BulletDataArgs arg)
         {
             Damage = arg.Damage;
@@ -41,6 +43,11 @@ namespace ShootEmUp
             SetVelocity(arg.Velocity);
         }
 
+        public void SetSimulatedStatus(bool isSimulated)
+        {
+            rigidbody2D.simulated = isSimulated;
+        }
+        
         public void SetVelocity(Vector2 velocity)
         {
             rigidbody2D.velocity = velocity;

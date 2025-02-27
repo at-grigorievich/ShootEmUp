@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class BulletSystem
+    public sealed class BulletSystem: IStartGameListener, IPauseGameListener, IFinishGameListener,
+        IUpdateGameListener
     {
         private readonly BulletPool _pool;
         private readonly LevelBounds _levelBounds;
@@ -18,6 +19,15 @@ namespace ShootEmUp
             _levelBounds = levelBounds;
         }
 
+        public void Start()
+        {
+            if(_pool.IsEmpty == true)
+            {
+                _pool.CreatePool();
+            }
+            Finish();
+        }
+        
         public void Update()
         {
             HashSet<BulletView> outOfBounds = new HashSet<BulletView>();
@@ -33,25 +43,31 @@ namespace ShootEmUp
                 RemoveBullet(outBullet);
             }
         }
-
-        public void SetActive(bool isActive)
+        
+        public void Pause()
         {
-            if(isActive == true)
+            foreach (var bullet in _activeBullets)
             {
-                if(_pool.IsEmpty == true)
-                {
-                    _pool.CreatePool();
-                }
-            }
-            else
-            {
-                foreach(var bullet in _activeBullets.ToArray())
-                {
-                    RemoveBullet(bullet);
-                }
+                bullet.SetSimulatedStatus(false);
             }
         }
 
+        public void Resume()
+        {
+            foreach (var bullet in _activeBullets)
+            {
+                bullet.SetSimulatedStatus(true);
+            }
+        }
+
+        public void Finish()
+        {
+            foreach(var bullet in _activeBullets.ToArray())
+            {
+                RemoveBullet(bullet);
+            }
+        }
+        
         public void FlyBulletByArgs(BulletDataArgs args)
         {
             BulletView newBullet = _pool.Get();

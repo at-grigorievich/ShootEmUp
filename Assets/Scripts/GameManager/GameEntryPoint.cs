@@ -47,7 +47,8 @@ namespace ShootEmUp
             _enemySystem = enemySystemFactory.Create(_characterController, _bulletSystem);
             
             AddListener(_characterController);
-
+            AddListener(_bulletSystem);
+            
             IPauseObserver pauseObserver = new InputPauseObserver();
             
             _sm.AddStatementsRange

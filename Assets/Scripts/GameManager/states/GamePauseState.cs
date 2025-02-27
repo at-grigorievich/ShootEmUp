@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ATG.StateMachine;
 using ShootEmUp.UI;
-using UnityEngine;
 
 namespace ShootEmUp
 {
