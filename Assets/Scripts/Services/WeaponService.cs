@@ -2,9 +2,8 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public interface IWeapon
+    public interface IWeapon: IActivateable
     {
-        void SetActive(bool isActive);
         void Shoot();
         void Update();
         void SetTarget(ITargeteable target);
@@ -14,29 +13,21 @@ namespace ShootEmUp
     {
         private readonly WeaponComponent _weaponComponent;
         private readonly BulletSystem _bulletSystem;
-        private readonly InputService _inputService;
 
         private readonly bool _isPlayer;
-
-        public InputWeaponService(WeaponComponentData weaponComponent, BulletSystem bulletSystem,
-            InputService inputService, bool isPlayer)
+        
+        public bool IsActive { get; private set; }
+        
+        public InputWeaponService(WeaponComponentData weaponComponent, BulletSystem bulletSystem, bool isPlayer)
         {
             _weaponComponent = weaponComponent.Create();
             _bulletSystem = bulletSystem;
-            _inputService = inputService;
             _isPlayer = isPlayer;
         }
 
         public void SetActive(bool isActive)
         {
-            if (isActive == true)
-            {
-                _inputService.OnFiredClicked += Shoot;
-            }
-            else
-            {
-                _inputService.OnFiredClicked -= Shoot;
-            }
+            IsActive = isActive;
         }
 
         public void SetTarget(ITargeteable target)
@@ -46,6 +37,7 @@ namespace ShootEmUp
 
         public void Shoot()
         {
+            if(IsActive == false) return;
             _weaponComponent.Shoot(_bulletSystem, _isPlayer);
         }
 
@@ -68,7 +60,7 @@ namespace ShootEmUp
 
         private float _currentTimer;
 
-        private bool _isActive;
+        public bool IsActive { get; private set; }
 
         public DelayWeaponService(WeaponComponentData weaponComponentData, BulletSystem bulletSystem, 
             float delay, bool isPlayer)
@@ -83,7 +75,7 @@ namespace ShootEmUp
         public void SetActive(bool isActive)
         {
             _currentTimer = 0f;
-            _isActive = isActive;
+            IsActive = isActive;
 
             if (isActive == false)
             {
@@ -98,7 +90,7 @@ namespace ShootEmUp
 
         public void Shoot()
         {
-            if (_target == null || _isActive == false) return;
+            if (_target == null || IsActive == false) return;
 
             _currentTimer = 0f;
 
@@ -111,7 +103,7 @@ namespace ShootEmUp
 
         public void Update()
         {
-            if (_isActive == false) return;
+            if (IsActive == false) return;
 
             if (_currentTimer <= _delay)
             {

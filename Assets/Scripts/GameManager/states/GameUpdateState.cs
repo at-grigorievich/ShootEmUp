@@ -1,26 +1,40 @@
-﻿using ATG.StateMachine;
+﻿using System.Collections.Generic;
+using ATG.StateMachine;
+using UnityEngine;
 
 namespace ShootEmUp
 {
     public sealed class GameUpdateState: Statement
     {
-        public GameUpdateState(IStateSwitcher sw) : base(sw)
+        private readonly IEnumerable<IUpdateGameListener> _listeners;
+        private readonly IEnumerable<IFixedUpdateGameListener> _fixedListeners;
+        
+        public GameUpdateState(IEnumerable<IUpdateGameListener> listeners,
+            IEnumerable<IFixedUpdateGameListener> fixedListeners, IStateSwitcher sw) : base(sw)
         {
+            _listeners = listeners;
+            _fixedListeners = fixedListeners;
         }
 
         public override void Enter()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            foreach (var updateGameListener in _listeners)
+            {
+                updateGameListener.Update();
+            }
         }
 
         public override void FixedExecute()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("fixed update");
+            foreach (var fixedUpdateGameListener in _fixedListeners)
+            {
+                fixedUpdateGameListener.FixedUpdate();
+            }
         }
     }
 }

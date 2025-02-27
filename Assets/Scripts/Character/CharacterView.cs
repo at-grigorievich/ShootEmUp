@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class CharacterView : MonoBehaviour, IDamageable
+    public sealed class CharacterView : MonoBehaviour, IActivateable, IDamageable
     {
         [SerializeField] private HitPointsComponentData hitPointsComponentData;
         [SerializeField] private WeaponComponentData weaponComponentData;
@@ -24,8 +24,12 @@ namespace ShootEmUp
             HitPointsComponent = hitPointsComponentData.Create();
         }
 
+        public bool IsActive { get; private set; }
+
         public void SetActive(bool isActive)
         {
+            IsActive = isActive;
+            
             if (isActive == true)
             {
                 gameObject.layer = (int)PhysicsLayer.CHARACTER;
@@ -38,7 +42,6 @@ namespace ShootEmUp
 
         public void TakeDamage(int damage) => OnDamaged?.Invoke(damage);
 
-        public IMoveableService CreateMovement(InputService inputService) =>
-                new MoveByInput(rigidbody2D, inputService, moveSpeed);
+        public IMoveableService CreateMovement() => new MoveByInput(rigidbody2D, moveSpeed);
     }
 }

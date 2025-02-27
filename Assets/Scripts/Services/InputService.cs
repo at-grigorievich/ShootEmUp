@@ -1,24 +1,38 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShootEmUp
 {
-    //TODO: Replace to new input system in the future............
-    public sealed class InputService
+    public sealed class InputService: IUpdateGameListener
     {
-        public Vector2 InputAxis {get; private set;}
-        public event Action OnFiredClicked;
-
+        private readonly IEnumerable<IUserInputListener> _userInputListener;
+        
+        public InputService(IEnumerable<IUserInputListener> userInputListeners)
+        {
+            _userInputListener = userInputListeners;
+        }
+        
         public void Update()
         {
             float x = Input.GetAxis("Horizontal");
             float y = Input.GetAxis("Vertical");
 
-            InputAxis = new Vector2(x, y);
+            Vector2 axis = new Vector2(x, y);
+            bool onFireClicked = Input.GetKeyDown(KeyCode.Space);
+            
+            InvokeListeners(axis, onFireClicked);
+        }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+        private void InvokeListeners(Vector2 axis, bool onFireClicked)
+        {
+            foreach (var listener in _userInputListener)
             {
-                OnFiredClicked?.Invoke();
+                listener.OnInputUpdated(axis);
+
+                if (onFireClicked == true)
+                {
+                    listener.OnFireClicked();
+                }
             }
         }
     }

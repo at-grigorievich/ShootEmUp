@@ -8,7 +8,8 @@ namespace ShootEmUp
         Vector2 Position {get;}
     }
 
-    public sealed class CharacterController: ITargeteable
+    public sealed class CharacterController: ITargeteable, IUserInputListener, 
+        IStartGameListener, IPauseGameListener, IUpdateGameListener, IFinishGameListener
     {
         private readonly CharacterView _view;
 
@@ -24,33 +25,56 @@ namespace ShootEmUp
             remove => _hpEditor.OnHpEmpty -= value;
         }
 
-        public CharacterController(CharacterView view, InputService inputService, BulletSystem bulletSystem)
+        public CharacterController(CharacterView view, BulletSystem bulletSystem)
         {
             _view = view;
 
-            _moveService = _view.CreateMovement(inputService);
+            _moveService = _view.CreateMovement();
             _hpEditor = new HitPointsService(_view.HitPointsComponent);
-            _weapon = new InputWeaponService(_view.WeaponComponentData, bulletSystem, inputService, true);
+            _weapon = new InputWeaponService(_view.WeaponComponentData, bulletSystem,true);
+        }
+        
+        public void OnInputUpdated(Vector2 axis)
+        {
+            _moveService.Move(axis);
         }
 
-        public void SetActive(bool isActive)
+        public void OnFireClicked()
         {
-            _view.SetActive(isActive);
-            _weapon.SetActive(isActive);
-
-            if(isActive == true)
-            {
-                _view.OnDamaged += _hpEditor.TakeDamage;
-            }
-            else
-            {
-                _view.OnDamaged -= _hpEditor.TakeDamage;
-            }
+            _weapon.Shoot();
         }
 
-        public void Update()
+        public void Start()
         {
-            _moveService.Move();
+            _view.SetActive(true);
+            _weapon.SetActive(true);
+            _moveService.SetActive(true);
+            
+            _view.OnDamaged += _hpEditor.TakeDamage;
+        }
+
+        public void Pause()
+        {
+            _weapon.SetActive(false);
+            _moveService.SetActive(false);
+            
+            _view.OnDamaged -= _hpEditor.TakeDamage;
+        }
+
+        public void Resume()
+        {
+            Start();
+        }
+
+        public void Update() { /* added for future */ }
+
+        public void Finish()
+        {
+            _view.SetActive(false);
+            _weapon.SetActive(false);
+            _moveService.SetActive(false);
+            
+            _view.OnDamaged -= _hpEditor.TakeDamage;
         }
     }
 }
