@@ -7,14 +7,17 @@ namespace ShootEmUp
     public sealed class EnemySystem
     {
         private readonly EnemyPool _pool;
-
+        
         private HashSet<EnemyController> _activeEnemies;
 
+        public int AddEnemyDelay { get; private set; }
+
         public EnemySystem(EnemyPositions enemyPositions, ITargeteable target, BulletSystem bulletSystem,
-            EnemyView enemyInstance, int initialCount, Transform root)
+            EnemyView enemyInstance, int initialCount, int addEnemyDelay, Transform root)
         {
             _pool = new EnemyPool(enemyPositions, target, bulletSystem, enemyInstance, initialCount, root);
             _activeEnemies = new HashSet<EnemyController>();
+            AddEnemyDelay = addEnemyDelay;
         }
 
         public void FixedUpdate()

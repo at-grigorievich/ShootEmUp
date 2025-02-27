@@ -30,7 +30,7 @@ namespace ShootEmUp
 
         public void Move()
         {
-            Vector2 direction = _inputService.InpuAxis;
+            Vector2 direction = _inputService.InputAxis;
             direction.y = 0f;
 
             Move(direction, _speed);

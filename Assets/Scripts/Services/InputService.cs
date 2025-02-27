@@ -6,7 +6,7 @@ namespace ShootEmUp
     //TODO: Replace to new input system in the future............
     public sealed class InputService
     {
-        public Vector2 InpuAxis {get; private set;}
+        public Vector2 InputAxis {get; private set;}
         public event Action OnFiredClicked;
 
         public void Update()
@@ -14,7 +14,7 @@ namespace ShootEmUp
             float x = Input.GetAxis("Horizontal");
             float y = Input.GetAxis("Vertical");
 
-            InpuAxis = new Vector2(x, y);
+            InputAxis = new Vector2(x, y);
 
             if (Input.GetKeyDown(KeyCode.Space))
             {

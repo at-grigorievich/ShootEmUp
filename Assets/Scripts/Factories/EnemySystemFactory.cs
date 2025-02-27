@@ -8,13 +8,14 @@ namespace ShootEmUp
     {
         [SerializeField] private EnemyView enemyInstance;
         [SerializeField] private int initialEnemyCount;
+        [SerializeField] private int addEnemyDelay;
         [SerializeField] private EnemyPositions enemyPositions;
         [SerializeField] private Transform enemiesParent;
 
         public EnemySystem Create(ITargeteable target, BulletSystem bulletSystem)
         {
             return new EnemySystem(enemyPositions, target, bulletSystem,
-                                     enemyInstance, initialEnemyCount, enemiesParent);
+                                     enemyInstance, initialEnemyCount, addEnemyDelay, enemiesParent);
         }
     }
 }

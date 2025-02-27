@@ -48,16 +48,16 @@ namespace ShootEmUp
             _bulletSystem.SetActive(true);
             _enemySystem.SetActive(true);
 
-            StartCoroutine(SpawnEnemiesWithDelay(1f));
+            StartCoroutine(SpawnEnemiesWithDelay());
 
             _characterController.OnDestroyed += FinishGame;
         }
 
-        private IEnumerator SpawnEnemiesWithDelay(float delay)
+        private IEnumerator SpawnEnemiesWithDelay()
         {
             while(true)
             {
-                yield return new WaitForSeconds(delay);
+                yield return new WaitForSeconds(_enemySystem.AddEnemyDelay);
                 _enemySystem.AddEnemy();
             }
         }
