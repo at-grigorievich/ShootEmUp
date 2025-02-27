@@ -37,9 +37,9 @@ namespace ShootEmUp.Helpers
         
         public void Start()
         {
-            _allow = true;
-            
             _currentTimer = _lastSeconds = _delayBeforeStartGame;
+            
+            _uiPanel.AddStartGameButtonListener(() => _allow = true);
             
             _uiPanel.UpdateTimer(_lastSeconds);
             _uiPanel.SetActive(true);
@@ -48,7 +48,9 @@ namespace ShootEmUp.Helpers
         public void Stop()
         {
             _allow = false;
+            
             _uiPanel.SetActive(false);
+            _uiPanel.RemoveAllStartGameButtonListeners();
         }
         
         public void UpdateTimer()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ATG.StateMachine;
 using ShootEmUp.Helpers;
+using ShootEmUp.UI;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -9,6 +10,7 @@ namespace ShootEmUp
     public sealed class GameEntryPoint : MonoBehaviour
     {
         [SerializeField] private StartGameTimerFactory startGameTimerFactory; 
+        [SerializeField] private PauseGamePanel pauseGamePanel;
         [Space(10)]
         [SerializeField] private CharacterFactory characterFactory;
 
@@ -45,11 +47,14 @@ namespace ShootEmUp
             _enemySystem = enemySystemFactory.Create(_characterController, _bulletSystem);
             
             AddListener(_characterController);
+
+            IPauseObserver pauseObserver = new InputPauseObserver();
             
             _sm.AddStatementsRange
             (
                 new GameStartState(startGameTimerFactory.Create(),_startGameListeners, _sm),
-                new GameUpdateState(_updateGameListeners, _fixedUpdateGameListeners, _sm)
+                new GameUpdateState(_updateGameListeners, _fixedUpdateGameListeners, pauseObserver, _sm),
+                new GamePauseState(_pauseGameListeners, pauseObserver, pauseGamePanel, _sm)
             );
             
             StartGame();
