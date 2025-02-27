@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemyController
+    public sealed class EnemyController: IStartGameListener, IPauseGameListener, IFinishGameListener, 
+        IFixedUpdateGameListener
     {
         private readonly EnemyView _view;
 
@@ -23,27 +24,55 @@ namespace ShootEmUp
             _weapon = new DelayWeaponService(_view.WeaponComponentData, bulletSystem, 2f, _view.IsPlayer);
             _hpEditor = new HitPointsService(_view.HitPointsComponent);
         }
-
-        public void SetActive(bool isActive)
+        
+        public void Start()
         {
-            _view.SetActive(isActive);
+            _view.SetActive(true);
+            _movement.SetActive(true);
+            _weapon.SetActive(true);
             
-            if(isActive == true)
-            {
-                _view.OnDamaged += _hpEditor.TakeDamage;
-                _movement.OnReachedDestination += OnReachedDestination;
+            _view.OnDamaged += _hpEditor.TakeDamage;
+            _movement.OnReachedDestination += OnReachedDestination;
 
-                _hpEditor.OnHpEmpty += OnHpEmptyHandler;
-            }
-            else
-            {
-                _view.OnDamaged -= _hpEditor.TakeDamage;
-                _movement.OnReachedDestination -= OnReachedDestination;
-
-                _hpEditor.OnHpEmpty -= OnHpEmptyHandler;
-            }
+            _hpEditor.OnHpEmpty += OnHpEmptyHandler;
         }
 
+        public void Pause()
+        {
+            _view.SetLayer(false);
+            _movement.SetActive(false);
+            _weapon.SetActive(false);
+            
+            _view.OnDamaged -= _hpEditor.TakeDamage;
+            _movement.OnReachedDestination -= OnReachedDestination;
+
+            _hpEditor.OnHpEmpty -= OnHpEmptyHandler;
+        }
+
+        public void Resume()
+        {
+            _view.SetLayer(true);
+            _movement.SetActive(true);
+            _weapon.SetActive(true);
+            
+            _view.OnDamaged += _hpEditor.TakeDamage;
+            _movement.OnReachedDestination += OnReachedDestination;
+
+            _hpEditor.OnHpEmpty += OnHpEmptyHandler;
+        }
+
+        public void Finish()
+        {
+            _view.SetActive(false);
+            _movement.SetActive(false);
+            _weapon.SetActive(false);
+            
+            _view.OnDamaged -= _hpEditor.TakeDamage;
+            _movement.OnReachedDestination -= OnReachedDestination;
+
+            _hpEditor.OnHpEmpty -= OnHpEmptyHandler;
+        }
+        
         public void FixedUpdate()
         {
             _movement.Move();

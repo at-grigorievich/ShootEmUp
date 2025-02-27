@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class EnemySystem
+    public sealed class EnemySystem: IStartGameListener, IPauseGameListener, IFinishGameListener, 
+        IFixedUpdateGameListener
     {
         private readonly EnemyPool _pool;
         
@@ -20,6 +21,39 @@ namespace ShootEmUp
             AddEnemyDelay = addEnemyDelay;
         }
 
+        public void Start()
+        {
+            if (_pool.IsEmpty == true)
+            {
+                _pool.CreatePool();
+            }
+            Finish();
+        }
+
+        public void Pause()
+        {
+            foreach (EnemyController enemy in _activeEnemies)
+            {
+                enemy.Pause();
+            }
+        }
+
+        public void Resume()
+        {
+            foreach (EnemyController enemy in _activeEnemies)
+            {
+                enemy.Resume();
+            }
+        }
+
+        public void Finish()
+        {
+            foreach (var enemy in _activeEnemies.ToArray())
+            {
+                RemoveEnemy(enemy);
+            }
+        }
+        
         public void FixedUpdate()
         {
             foreach (EnemyController enemy in _activeEnemies)
@@ -27,30 +61,12 @@ namespace ShootEmUp
                 enemy.FixedUpdate();
             }
         }
-
-        public void SetActive(bool isActive)
-        {
-            if (isActive == true)
-            {
-                if (_pool.IsEmpty == true)
-                {
-                    _pool.CreatePool();
-                }
-            }
-            else
-            {
-                foreach (var enemy in _activeEnemies.ToArray())
-                {
-                    RemoveEnemy(enemy);
-                }
-            }
-        }
-
+        
         public void AddEnemy()
         {
             EnemyController newEnemy = _pool.Get();
             _activeEnemies.Add(newEnemy);
-
+            
             newEnemy.OnDestroyed += OnEnemyDestroyed;
         }
 

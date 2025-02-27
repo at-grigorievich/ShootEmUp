@@ -29,6 +29,11 @@ namespace ShootEmUp
         {
             spriteRenderer.enabled = isActive;
             
+            SetLayer(isActive);
+        }
+
+        public void SetLayer(bool isActive)
+        {
             if(isActive == true)
             {
                 gameObject.layer = (int)PhysicsLayer.ENEMY;
@@ -38,7 +43,7 @@ namespace ShootEmUp
                 gameObject.layer = (int)PhysicsLayer.DISABLED;
             }
         }
-
+        
         public void SetParent(Transform parent)
         {
             transform.parent = parent;

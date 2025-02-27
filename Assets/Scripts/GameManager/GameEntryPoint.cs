@@ -48,6 +48,7 @@ namespace ShootEmUp
             
             AddListener(_characterController);
             AddListener(_bulletSystem);
+            AddListener(_enemySystem);
             
             IPauseObserver pauseObserver = new InputPauseObserver();
             
@@ -97,9 +98,6 @@ namespace ShootEmUp
         private void Update()
         {
             _sm.ExecuteMachine();
-            
-            //_inputService.Update();
-            //_bulletSystem.Update();
         }
 
         private void FixedUpdate()
@@ -116,7 +114,7 @@ namespace ShootEmUp
             //_bulletSystem.SetActive(true);
             //_enemySystem.SetActive(true);
 
-            //StartCoroutine(SpawnEnemiesWithDelay());
+            StartCoroutine(SpawnEnemiesWithDelay());
 
             //_characterController.OnDestroyed += FinishGame;
         }

@@ -50,7 +50,7 @@ namespace ShootEmUp
 
             enemyController.SetTarget(_targeteable);
 
-            enemyController.SetActive(true);
+            enemyController.Start();
 
             return enemyController;
         }
@@ -60,7 +60,7 @@ namespace ShootEmUp
             base.Post(element);
 
             element.SetParent(_root);
-            element.SetActive(false);
+            element.Finish();
         }
     }
 }
