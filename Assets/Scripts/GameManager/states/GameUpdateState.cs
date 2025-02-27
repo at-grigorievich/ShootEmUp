@@ -7,29 +7,39 @@ namespace ShootEmUp
     public sealed class GameUpdateState: Statement
     {
         private readonly IPauseObserver _pauseObserver;
+        private readonly IGameFinalizator _gameFinalizator;
         
         private readonly IEnumerable<IUpdateGameListener> _listeners;
         private readonly IEnumerable<IFixedUpdateGameListener> _fixedListeners;
         
         public GameUpdateState(IEnumerable<IUpdateGameListener> listeners,
-            IEnumerable<IFixedUpdateGameListener> fixedListeners, IPauseObserver pauseObserver,
+            IEnumerable<IFixedUpdateGameListener> fixedListeners, 
+            IPauseObserver pauseObserver, IGameFinalizator gameFinalizator,
             IStateSwitcher sw) : base(sw)
         {
             _listeners = listeners;
             _fixedListeners = fixedListeners;
             
             _pauseObserver = pauseObserver;
+            _gameFinalizator = gameFinalizator;
         }
 
         public override void Enter()
         {
+            _gameFinalizator.OnFinished += SwitchToFinish;
+        }
+
+        public override void Exit()
+        {
+            _gameFinalizator.OnFinished -= SwitchToFinish;
+            base.Exit();
         }
 
         public override void Execute()
         {
             if (_pauseObserver.IsPausePressed == true)
             {
-                SwithToPause();
+                SwitchToPause();
                 return;
             }
             
@@ -47,9 +57,14 @@ namespace ShootEmUp
             }
         }
 
-        private void SwithToPause()
+        private void SwitchToPause()
         {
             _stateSwitcher.SwitchState<GamePauseState>();
+        }
+
+        private void SwitchToFinish()
+        {
+            _stateSwitcher.SwitchState<GameFinishState>();
         }
     }
 }

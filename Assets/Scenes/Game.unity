@@ -2736,6 +2736,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3536033528871461749, guid: 9699e7e809fd44b2bbf3d30c951ecbd2,
         type: 3}
+      propertyPath: renderer
+      value: 
+      objectReference: {fileID: 4414282821800802408}
+    - target: {fileID: 3536033528871461749, guid: 9699e7e809fd44b2bbf3d30c951ecbd2,
+        type: 3}
       propertyPath: weaponComponentData.weaponTransform
       value: 
       objectReference: {fileID: 1768777096}
@@ -2804,7 +2809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGameTimerFactory:
-    delayBeforeStartGame: 1
+    delayBeforeStartGame: 3
     timer: {fileID: 1076064029}
   pauseGamePanel: {fileID: 1865074142}
   characterFactory:
@@ -2819,7 +2824,7 @@ MonoBehaviour:
     enemyInstance: {fileID: 937133223106980174, guid: 87fe189881a524806800482ac8eaaa83,
       type: 3}
     initialEnemyCount: 50
-    addEnemyDelay: 2
+    addEnemyDelay: 1
     enemyPositions: {fileID: 7166351703523243261}
     enemiesParent: {fileID: 603249876}
 --- !u!212 &4162873433806880330
@@ -2892,6 +2897,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1690a93f9a1b0814e86ebd7a3aa826e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &4414282821800802408 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3596342805743092487, guid: 9699e7e809fd44b2bbf3d30c951ecbd2,
+    type: 3}
+  m_PrefabInstance: {fileID: 3926786964592264468}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4788406047096451828
 GameObject:
   m_ObjectHideFlags: 0

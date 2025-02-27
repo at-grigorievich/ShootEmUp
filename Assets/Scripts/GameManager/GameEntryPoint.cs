@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using ATG.StateMachine;
 using ShootEmUp.Helpers;
@@ -46,6 +45,7 @@ namespace ShootEmUp
             _characterController = characterFactory.Create(_bulletSystem);
             _enemySystem = enemySystemFactory.Create(_characterController, _bulletSystem);
             
+            AddListener(new EnemySpawnService(_enemySystem));
             AddListener(_characterController);
             AddListener(_bulletSystem);
             AddListener(_enemySystem);
@@ -54,9 +54,10 @@ namespace ShootEmUp
             
             _sm.AddStatementsRange
             (
-                new GameStartState(startGameTimerFactory.Create(),_startGameListeners, _sm),
-                new GameUpdateState(_updateGameListeners, _fixedUpdateGameListeners, pauseObserver, _sm),
-                new GamePauseState(_pauseGameListeners, pauseObserver, pauseGamePanel, _sm)
+                new GameStartState(startGameTimerFactory.Create(),_startGameListeners, _characterController, _sm),
+                new GameUpdateState(_updateGameListeners, _fixedUpdateGameListeners, pauseObserver, _characterController, _sm),
+                new GamePauseState(_pauseGameListeners, pauseObserver, pauseGamePanel, _sm),
+                new GameFinishState(_finishGameListeners, _sm)
             );
             
             StartGame();
@@ -103,31 +104,13 @@ namespace ShootEmUp
         private void FixedUpdate()
         {
             _sm.FixedExecuteMachine();
-            
-            //_enemySystem.FixedUpdate();
         }
 
         private void StartGame()
         {
             _sm.SwitchState<GameStartState>();
-            //_characterController.SetActive(true);
-            //_bulletSystem.SetActive(true);
-            //_enemySystem.SetActive(true);
-
-            StartCoroutine(SpawnEnemiesWithDelay());
-
-            //_characterController.OnDestroyed += FinishGame;
         }
-
-        private IEnumerator SpawnEnemiesWithDelay()
-        {
-            while(true)
-            {
-                yield return new WaitForSeconds(_enemySystem.AddEnemyDelay);
-                _enemySystem.AddEnemy();
-            }
-        }
-
+        
         private void FinishGame()
         {
             //Time.timeScale = 0;

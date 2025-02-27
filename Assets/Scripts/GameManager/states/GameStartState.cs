@@ -9,17 +9,23 @@ namespace ShootEmUp
         private readonly StartGameTimer _startGameTimer;
         private readonly IEnumerable<IStartGameListener> _listeners;
         
+        private readonly CharacterController _characterController;
+        
         public GameStartState(StartGameTimer startGameTimer,
-            IEnumerable<IStartGameListener> listeners, IStateSwitcher sw) : base(sw)
+            IEnumerable<IStartGameListener> listeners,
+            CharacterController characterController, IStateSwitcher sw) : base(sw)
         {
             _listeners = listeners;
             _startGameTimer = startGameTimer;
+            _characterController = characterController;
         }
 
         public override void Enter()
         {
             _startGameTimer.OnTimerCompleted += InvokeListeners;
             _startGameTimer.Start();
+            
+            _characterController.SetVisible(true);
         }
 
         public override void Exit()

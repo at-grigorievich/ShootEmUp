@@ -8,8 +8,14 @@ namespace ShootEmUp
         Vector2 Position {get;}
     }
 
-    public sealed class CharacterController: ITargeteable, IUserInputListener, 
-        IStartGameListener, IPauseGameListener, IUpdateGameListener, IFinishGameListener
+    public interface IGameFinalizator
+    {
+        event Action OnFinished;
+    }
+
+    public sealed class CharacterController: ITargeteable, IGameFinalizator,
+        IUserInputListener, IStartGameListener, IPauseGameListener, 
+        IUpdateGameListener, IFinishGameListener
     {
         private readonly CharacterView _view;
 
@@ -19,7 +25,7 @@ namespace ShootEmUp
 
         public Vector2 Position => _view.transform.position;
 
-        public event Action OnDestroyed
+        public event Action OnFinished
         {
             add => _hpEditor.OnHpEmpty += value;
             remove => _hpEditor.OnHpEmpty -= value;
@@ -47,6 +53,8 @@ namespace ShootEmUp
         public void Start()
         {
             _view.SetActive(true);
+            
+            _hpEditor.ResetHp();
             _weapon.SetActive(true);
             _moveService.SetActive(true);
             
@@ -74,7 +82,12 @@ namespace ShootEmUp
             _weapon.SetActive(false);
             _moveService.SetActive(false);
             
+            SetVisible(false);
+            _view.PlaceDefaultPosition();
+            
             _view.OnDamaged -= _hpEditor.TakeDamage;
         }
+
+        public void SetVisible(bool isVisible) => _view.SetVisible(isVisible);
     }
 }

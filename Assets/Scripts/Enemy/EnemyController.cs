@@ -21,12 +21,14 @@ namespace ShootEmUp
             _view = view;
 
             _movement = _view.CreateMovement();
-            _weapon = new DelayWeaponService(_view.WeaponComponentData, bulletSystem, 2f, _view.IsPlayer);
+            _weapon = new DelayWeaponService(_view.WeaponComponentData, bulletSystem, 1.25f, _view.IsPlayer);
             _hpEditor = new HitPointsService(_view.HitPointsComponent);
         }
         
         public void Start()
         {
+            _hpEditor.ResetHp();
+            
             _view.SetActive(true);
             _movement.SetActive(true);
             _weapon.SetActive(true);

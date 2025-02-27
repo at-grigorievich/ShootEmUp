@@ -8,7 +8,8 @@ namespace ShootEmUp
         [SerializeField] private HitPointsComponentData hitPointsComponentData;
         [SerializeField] private WeaponComponentData weaponComponentData;
         [SerializeField] private TeamComponentData teamComponentData;
-
+        [Space(10)]
+        [SerializeField] private Renderer renderer;
         [SerializeField] private new Rigidbody2D rigidbody2D;
         [SerializeField] private float moveSpeed; //TODO: create config in the future...
 
@@ -40,6 +41,16 @@ namespace ShootEmUp
             }
         }
 
+        public void SetVisible(bool isVisible)
+        {
+            renderer.enabled = isVisible;
+        }
+
+        public void PlaceDefaultPosition()
+        {
+            transform.position = new Vector3(0f, -3.5f, 0f);
+        }
+        
         public void TakeDamage(int damage) => OnDamaged?.Invoke(damage);
 
         public IMoveableService CreateMovement() => new MoveByInput(rigidbody2D, moveSpeed);
