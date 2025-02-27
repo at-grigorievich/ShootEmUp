@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using ATG.StateMachine;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -10,14 +12,22 @@ namespace ShootEmUp
         [SerializeField] private BulletSystemFactory bulletSystemFactory;
         [SerializeField] private EnemySystemFactory enemySystemFactory;
 
+        private StateMachine _sm;
+        
         private InputService _inputService;
 
         private CharacterController _characterController;
         private BulletSystem _bulletSystem;
         private EnemySystem _enemySystem;
-
+        
+        private HashSet<IStartGameListener> _startGameListeners;
+        private HashSet<IUpdateGameListener> _updateGameListeners;
+        private HashSet<IPauseGameListener> _pauseGameListeners;
+        private HashSet<IFinishGameListener> _finishGameListeners;
+        
         private void Awake()
         {
+            _sm = new StateMachine();
             _inputService = new InputService();
         }
 
@@ -32,6 +42,8 @@ namespace ShootEmUp
 
         private void Update()
         {
+            _sm.ExecuteMachine();
+            
             _inputService.Update();
             _characterController.Update();
             _bulletSystem.Update();
@@ -39,6 +51,8 @@ namespace ShootEmUp
 
         private void FixedUpdate()
         {
+            _sm.FixedExecuteMachine();
+            
             _enemySystem.FixedUpdate();
         }
 
