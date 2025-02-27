@@ -25,6 +25,11 @@ namespace ShootEmUp
         public override void Enter()
         {
             _ui.SetActive(true);
+
+            foreach (var pauseGameListener in _listeners)
+            {
+                pauseGameListener.Pause();
+            }
         }
 
         public override void Exit()
@@ -45,6 +50,11 @@ namespace ShootEmUp
 
         private void SwitchToUpdate()
         {
+            foreach (var pauseGameListener in _listeners)
+            {
+                pauseGameListener.Resume();
+            }
+
             _stateSwitcher.SwitchState<GameUpdateState>();
         }
     }

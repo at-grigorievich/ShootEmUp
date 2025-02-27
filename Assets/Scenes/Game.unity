@@ -2804,7 +2804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGameTimerFactory:
-    delayBeforeStartGame: 3
+    delayBeforeStartGame: 1
     timer: {fileID: 1076064029}
   pauseGamePanel: {fileID: 1865074142}
   characterFactory:
