@@ -18,9 +18,9 @@ namespace ShootEmUp
         
         public bool IsActive { get; private set; }
         
-        public InputWeaponService(WeaponComponentData weaponComponent, BulletSystem bulletSystem, bool isPlayer)
+        public InputWeaponService(WeaponComponent weaponComponent, BulletSystem bulletSystem, bool isPlayer)
         {
-            _weaponComponent = weaponComponent.Create();
+            _weaponComponent = weaponComponent;
             _bulletSystem = bulletSystem;
             _isPlayer = isPlayer;
         }

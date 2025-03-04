@@ -8,12 +8,7 @@ namespace ShootEmUp
         Vector2 Position {get;}
     }
 
-    public interface IGameFinalizator
-    {
-        event Action OnFinished;
-    }
-
-    public sealed class CharacterController: ITargeteable, IGameFinalizator,
+    public sealed class CharacterController: ITargeteable,
         IUserInputListener, IStartGameListener, IPauseGameListener, 
         IUpdateGameListener, IFinishGameListener
     {
@@ -22,6 +17,8 @@ namespace ShootEmUp
         private readonly IWeapon _weapon;
         private readonly IHpEditor _hpEditor;
         private readonly IMoveableService _moveService;
+        
+        private readonly IGameFinalizator _gameFinalizator;
 
         public Vector2 Position => _view.transform.position;
 
@@ -31,13 +28,18 @@ namespace ShootEmUp
             remove => _hpEditor.OnHpEmpty -= value;
         }
 
-        public CharacterController(CharacterView view, BulletSystem bulletSystem)
+        public CharacterController(CharacterView view, IWeapon weapon, IHpEditor hpEditor, IMoveableService moveService,
+            IGameFinalizator gameFinalizator,
+            TeamComponentData teamComponentData)
         {
             _view = view;
+            _view.IsPlayer = teamComponentData.IsPlayer;
 
-            _moveService = _view.CreateMovement();
-            _hpEditor = new HitPointsService(_view.HitPointsComponent);
-            _weapon = new InputWeaponService(_view.WeaponComponentData, bulletSystem,true);
+            _moveService = moveService;
+            _hpEditor = hpEditor;
+            _weapon = weapon;
+            
+            _gameFinalizator = gameFinalizator;
         }
         
         public void OnInputUpdated(Vector2 axis)
@@ -57,7 +59,8 @@ namespace ShootEmUp
             _hpEditor.ResetHp();
             _weapon.SetActive(true);
             _moveService.SetActive(true);
-            
+
+            _hpEditor.OnHpEmpty += _gameFinalizator.Final;
             _view.OnDamaged += _hpEditor.TakeDamage;
         }
 
@@ -85,6 +88,7 @@ namespace ShootEmUp
             SetVisible(false);
             _view.PlaceDefaultPosition();
             
+            _hpEditor.OnHpEmpty -= _gameFinalizator.Final;
             _view.OnDamaged -= _hpEditor.TakeDamage;
         }
 

@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace ShootEmUp
 {
@@ -8,22 +8,19 @@ namespace ShootEmUp
     {
         public bool IsPausePressed { get; }
     }
-
-    public sealed class InputPauseObserver : IPauseObserver
-    {
-        public bool IsPausePressed =>Input.GetKeyDown(KeyCode.Escape) == true;
-    }
     
-    public sealed class InputService: IUpdateGameListener
+    public sealed class InputService: ITickable, IPauseObserver
     {
         private readonly IEnumerable<IUserInputListener> _userInputListener;
         
-        public InputService(IEnumerable<IUserInputListener> userInputListeners)
+        public bool IsPausePressed => Input.GetKeyDown(KeyCode.Escape) == true;
+        
+        public InputService(GameCycleListenersDispatcher gameCycleListenersDispatcher)
         {
-            _userInputListener = userInputListeners;
+            _userInputListener = gameCycleListenersDispatcher.UserInputListeners;
         }
         
-        public void Update()
+        public void Tick()
         {
             Vector2 axis = GetAxis();
             bool onFireClicked = Input.GetKeyDown(KeyCode.Space);

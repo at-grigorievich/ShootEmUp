@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,13 +11,15 @@ namespace ShootEmUp
         private readonly EnemyPool _pool;
         
         private HashSet<EnemyController> _activeEnemies;
+        
+        private ITargeteable _targeteable;
 
         public int AddEnemyDelay { get; private set; }
 
-        public EnemySystem(EnemyPositions enemyPositions, ITargeteable target, BulletSystem bulletSystem,
+        public EnemySystem(EnemyPositions enemyPositions, BulletSystem bulletSystem,
             EnemyView enemyInstance, int initialCount, int addEnemyDelay, Transform root)
         {
-            _pool = new EnemyPool(enemyPositions, target, bulletSystem, enemyInstance, initialCount, root);
+            _pool = new EnemyPool(enemyPositions, bulletSystem, enemyInstance, initialCount, root);
             _activeEnemies = new HashSet<EnemyController>();
             AddEnemyDelay = addEnemyDelay;
         }
@@ -65,11 +68,24 @@ namespace ShootEmUp
         public void AddEnemy()
         {
             EnemyController newEnemy = _pool.Get();
+            
+            newEnemy.SetTarget(_targeteable);
+            
             _activeEnemies.Add(newEnemy);
             
             newEnemy.OnDestroyed += OnEnemyDestroyed;
         }
 
+        public void SetTarget(ITargeteable targeteable)
+        {
+            _targeteable = targeteable;
+
+            foreach (var activeEnemy in _activeEnemies)
+            {
+                activeEnemy.SetTarget(_targeteable);
+            }
+        }
+        
         private void RemoveEnemy(EnemyController enemyController)
         {
             if (_activeEnemies.Remove(enemyController) == true)

@@ -9,14 +9,12 @@ namespace ShootEmUp
         private readonly EnemyPositions _enemyPositions;
 
         private readonly BulletSystem _bulletSystem;
-        private readonly ITargeteable _targeteable;
 
-        public EnemyPool(EnemyPositions enemyPositions, ITargeteable target, BulletSystem bulletSystem,
+        public EnemyPool(EnemyPositions enemyPositions, BulletSystem bulletSystem,
             EnemyView instance, int count, Transform root) 
             : base(instance, count, root)
         {
             _enemyPositions = enemyPositions;
-            _targeteable = target;
             _bulletSystem = bulletSystem;
         }
 
@@ -47,8 +45,6 @@ namespace ShootEmUp
 
             enemyController.SetPosition(position);
             enemyController.SetDestination(_enemyPositions.RandomAttackPosition().position);
-
-            enemyController.SetTarget(_targeteable);
 
             enemyController.Start();
 

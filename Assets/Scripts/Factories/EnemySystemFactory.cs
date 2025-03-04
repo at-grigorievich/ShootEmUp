@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace ShootEmUp
 {
@@ -12,10 +14,23 @@ namespace ShootEmUp
         [SerializeField] private EnemyPositions enemyPositions;
         [SerializeField] private Transform enemiesParent;
 
-        public EnemySystem Create(ITargeteable target, BulletSystem bulletSystem)
+        public EnemySystem Create(BulletSystem bulletSystem)
         {
-            return new EnemySystem(enemyPositions, target, bulletSystem,
+            return new EnemySystem(enemyPositions, bulletSystem,
                                      enemyInstance, initialEnemyCount, addEnemyDelay, enemiesParent);
+        }
+
+        public void Register(IContainerBuilder builder)
+        {
+            builder.RegisterEntryPoint<EnemySpawnService>();
+            
+            builder.Register<EnemySystem>(Lifetime.Singleton)
+                .WithParameter(enemyPositions)
+                .WithParameter(enemyInstance)
+                .WithParameter("initialCount", initialEnemyCount)
+                .WithParameter("addEnemyDelay", addEnemyDelay)
+                .WithParameter(enemiesParent)
+                .AsSelf().AsImplementedInterfaces();
         }
     }
 }

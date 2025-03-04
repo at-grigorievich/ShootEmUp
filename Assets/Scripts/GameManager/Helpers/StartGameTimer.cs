@@ -1,6 +1,7 @@
 ﻿using System;
 using ShootEmUp.UI;
 using UnityEngine;
+using VContainer;
 
 namespace ShootEmUp.Helpers
 {
@@ -13,6 +14,13 @@ namespace ShootEmUp.Helpers
         public StartGameTimer Create()
         {
             return new StartGameTimer(delayBeforeStartGame, timer);
+        }
+
+        public void Register(IContainerBuilder containerBuilder)
+        {
+            containerBuilder.Register<StartGameTimer>(Lifetime.Scoped)
+                .WithParameter("delayBeforeStartGame", delayBeforeStartGame)
+                .WithParameter("uiPanel", timer);
         }
     }
     

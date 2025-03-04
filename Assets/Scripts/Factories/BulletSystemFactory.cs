@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using VContainer;
 
 namespace ShootEmUp
 {
@@ -15,6 +16,16 @@ namespace ShootEmUp
         public BulletSystem Create()
         {
             return new BulletSystem(bulletInstance, initialBulletCount, bulletsParent, bounds);
+        }
+
+        public void Register(IContainerBuilder builder)
+        {
+            builder.Register<BulletSystem>(Lifetime.Singleton)
+                .WithParameter(bulletInstance)
+                .WithParameter(initialBulletCount)
+                .WithParameter(bulletsParent)
+                .WithParameter(bounds)
+                .AsSelf().AsImplementedInterfaces();
         }
 
     }

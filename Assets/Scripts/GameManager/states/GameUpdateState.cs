@@ -1,37 +1,36 @@
 ﻿using System.Collections.Generic;
 using ATG.StateMachine;
-using UnityEngine;
 
 namespace ShootEmUp
 {
     public sealed class GameUpdateState: Statement
     {
         private readonly IPauseObserver _pauseObserver;
-        private readonly IGameFinalizator _gameFinalizator;
+        private readonly IGameFinalizeHandler _gameFinalizeHandler;
         
         private readonly IEnumerable<IUpdateGameListener> _listeners;
         private readonly IEnumerable<IFixedUpdateGameListener> _fixedListeners;
         
         public GameUpdateState(IEnumerable<IUpdateGameListener> listeners,
             IEnumerable<IFixedUpdateGameListener> fixedListeners, 
-            IPauseObserver pauseObserver, IGameFinalizator gameFinalizator,
+            IPauseObserver pauseObserver, IGameFinalizeHandler gameFinalizeHandler,
             IStateSwitcher sw) : base(sw)
         {
             _listeners = listeners;
             _fixedListeners = fixedListeners;
             
             _pauseObserver = pauseObserver;
-            _gameFinalizator = gameFinalizator;
+            _gameFinalizeHandler = gameFinalizeHandler;
         }
 
         public override void Enter()
         {
-            _gameFinalizator.OnFinished += SwitchToFinish;
+            _gameFinalizeHandler.OnFinalized += SwitchToFinish;
         }
 
         public override void Exit()
         {
-            _gameFinalizator.OnFinished -= SwitchToFinish;
+            _gameFinalizeHandler.OnFinalized -= SwitchToFinish;
             base.Exit();
         }
 

@@ -1,107 +1,46 @@
-using System.Collections.Generic;
 using ATG.StateMachine;
 using ShootEmUp.Helpers;
 using ShootEmUp.UI;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace ShootEmUp
 {
-    public sealed class GameEntryPoint : MonoBehaviour
+    public sealed class GameEntryPoint: IStartable, ITickable, IFixedTickable
     {
-        [SerializeField] private StartGameTimerFactory startGameTimerFactory; 
-        [SerializeField] private PauseGamePanel pauseGamePanel;
-        [Space(10)]
-        [SerializeField] private CharacterFactory characterFactory;
-
-        [SerializeField] private BulletSystemFactory bulletSystemFactory;
-        [SerializeField] private EnemySystemFactory enemySystemFactory;
-
-        private StateMachine _sm;
+        private readonly GameCycleListenersDispatcher _listenerDispatcher;
         
-        private InputService _inputService;
+        private readonly StateMachine _sm;
 
-        private CharacterController _characterController;
-        private BulletSystem _bulletSystem;
-        private EnemySystem _enemySystem;
-
-        private HashSet<IUserInputListener> _userInputListeners = new();
-        private HashSet<IStartGameListener> _startGameListeners = new();
-        private HashSet<IUpdateGameListener> _updateGameListeners = new();
-        private HashSet<IFixedUpdateGameListener> _fixedUpdateGameListeners = new();
-        private HashSet<IPauseGameListener> _pauseGameListeners = new();
-        private HashSet<IFinishGameListener> _finishGameListeners = new();
-        
-        private void Awake()
+        public GameEntryPoint(StartGameTimer startGameTimer, IGameFinalizeHandler gameFinalizeHandler,
+            GameCycleListenersDispatcher listenersDispatcher, 
+            InputService inputService,
+            PauseGamePanel pauseGamePanel)
         {
+            _listenerDispatcher = listenersDispatcher;
+            
             _sm = new StateMachine();
-            _inputService = new InputService(_userInputListeners);
-
-            AddListener(_inputService);
-        }
-
-        private void Start()
-        {
-            _bulletSystem = bulletSystemFactory.Create();
-            _characterController = characterFactory.Create(_bulletSystem);
-            _enemySystem = enemySystemFactory.Create(_characterController, _bulletSystem);
-            
-            AddListener(new EnemySpawnService(_enemySystem));
-            AddListener(_characterController);
-            AddListener(_bulletSystem);
-            AddListener(_enemySystem);
-            
-            IPauseObserver pauseObserver = new InputPauseObserver();
-            
             _sm.AddStatementsRange
             (
-                new GameStartState(startGameTimerFactory.Create(),_startGameListeners, _characterController, _sm),
-                new GameUpdateState(_updateGameListeners, _fixedUpdateGameListeners, pauseObserver, _characterController, _sm),
-                new GamePauseState(_pauseGameListeners, pauseObserver, pauseGamePanel, _sm),
-                new GameFinishState(_finishGameListeners, _sm)
+                new GameStartState(startGameTimer, listenersDispatcher.StartGameListeners,  _sm),
+                new GameUpdateState(listenersDispatcher.UpdateGameListeners, listenersDispatcher.FixedUpdateGameListeners, 
+                    inputService, gameFinalizeHandler, _sm),
+                new GamePauseState(listenersDispatcher.PauseGameListeners, inputService, pauseGamePanel, _sm),
+                new GameFinishState(listenersDispatcher.FinishGameListeners, _sm)
             );
-            
-            StartGame();
-        }
-
-        private void AddListener(object src)
-        {
-            if (src is IUserInputListener userInputListener)
-            {
-                _userInputListeners.Add(userInputListener);
-            }
-
-            if (src is IStartGameListener startGameListener)
-            {
-                _startGameListeners.Add(startGameListener);
-            }
-
-            if (src is IUpdateGameListener updateGameListener)
-            {
-                _updateGameListeners.Add(updateGameListener);
-            }
-
-            if (src is IFixedUpdateGameListener fixedUpdateGameListener)
-            {
-                _fixedUpdateGameListeners.Add(fixedUpdateGameListener);
-            }
-
-            if (src is IPauseGameListener pauseGameListener)
-            {
-                _pauseGameListeners.Add(pauseGameListener);
-            }
-
-            if (src is IFinishGameListener finishGameListener)
-            {
-                _finishGameListeners.Add(finishGameListener);
-            }
         }
         
-        private void Update()
+        public void Start()
+        {
+            StartGame();
+        }
+        
+        public void Tick()
         {
             _sm.ExecuteMachine();
         }
 
-        private void FixedUpdate()
+        public void FixedTick()
         {
             _sm.FixedExecuteMachine();
         }
