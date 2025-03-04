@@ -1,7 +1,6 @@
 using ATG.StateMachine;
 using ShootEmUp.Helpers;
 using ShootEmUp.UI;
-using UnityEngine;
 using VContainer.Unity;
 
 namespace ShootEmUp
@@ -48,17 +47,6 @@ namespace ShootEmUp
         private void StartGame()
         {
             _sm.SwitchState<GameStartState>();
-        }
-        
-        private void FinishGame()
-        {
-            //Time.timeScale = 0;
-
-            //_characterController.SetActive(false);
-            //_bulletSystem.SetActive(false);
-            //_enemySystem.SetActive(false);
-
-            //Debug.Log("finish game");
         }
     }
 }
