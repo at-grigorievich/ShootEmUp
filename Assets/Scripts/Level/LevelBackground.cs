@@ -1,53 +1,70 @@
 using System;
 using UnityEngine;
+using VContainer;
 
 namespace ShootEmUp
 {
-    public sealed class LevelBackground : MonoBehaviour
+    [Serializable]
+    public sealed class LevelBackgroundFactory
     {
-        private float startPositionY;
+        [SerializeField] private LevelBackground.Params parameters;
+        [SerializeField] private Transform myTransform;
 
-        private float endPositionY;
-
-        private float movingSpeedY;
-
-        private float positionX;
-
-        private float positionZ;
-
-        private Transform myTransform;
-
-        [SerializeField]
-        private Params m_params;
-
-        private void Awake()
+        public void Register(IContainerBuilder builder)
         {
-            this.startPositionY = this.m_params.m_startPositionY;
-            this.endPositionY = this.m_params.m_endPositionY;
-            this.movingSpeedY = this.m_params.m_movingSpeedY;
-            this.myTransform = this.transform;
-            var position = this.myTransform.position;
-            this.positionX = position.x;
-            this.positionZ = position.z;
+            builder.Register<LevelBackground>(Lifetime.Singleton)
+                .WithParameter(parameters)
+                .WithParameter(myTransform)
+                .AsImplementedInterfaces();
         }
+    }
+    
+    public sealed class LevelBackground : IFixedUpdateGameListener
+    {
+        private readonly float _startPositionY;
 
-        private void FixedUpdate()
+        private readonly float _endPositionY;
+
+        private readonly float _movingSpeedY;
+
+        private readonly float _positionX;
+
+        private readonly float _positionZ;
+
+        private readonly Transform _myTransform;
+
+
+        public LevelBackground(Transform myTransform, LevelBackground.Params parameters)
         {
-            if (this.myTransform.position.y <= this.endPositionY)
+            _startPositionY = parameters.m_startPositionY;
+            _endPositionY = parameters.m_endPositionY;
+            _movingSpeedY = parameters.m_movingSpeedY;
+            _myTransform = myTransform;
+            
+            var position = _myTransform.position;
+            
+            _positionX = position.x;
+            _positionZ = position.z;
+        }
+        
+        public void FixedUpdate()
+        {
+            if (_myTransform.position.y <= _endPositionY)
             {
-                this.myTransform.position = new Vector3(
-                    this.positionX,
-                    this.startPositionY,
-                    this.positionZ
+                _myTransform.position = new Vector3(
+                    _positionX,
+                    _startPositionY,
+                    _positionZ
                 );
             }
 
-            this.myTransform.position -= new Vector3(
-                this.positionX,
-                this.movingSpeedY * Time.fixedDeltaTime,
-                this.positionZ
+            _myTransform.position -= new Vector3(
+                _positionX,
+                _movingSpeedY * Time.fixedDeltaTime,
+                _positionZ
             );
         }
+        
 
         [Serializable]
         public sealed class Params

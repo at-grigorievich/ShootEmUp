@@ -54,6 +54,8 @@ namespace ShootEmUp
 
         public void Start()
         {
+            SetVisible(true);
+            
             _view.SetActive(true);
             
             _hpEditor.ResetHp();

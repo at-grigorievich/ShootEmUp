@@ -2371,7 +2371,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8010320557783749713}
-  - component: {fileID: 4852396043583267082}
   m_Layer: 0
   m_Name: '[BACKGROUND]'
   m_TagString: Untagged
@@ -2806,6 +2805,12 @@ MonoBehaviour:
     addEnemyDelay: 1
     enemyPositions: {fileID: 7166351703523243261}
     enemiesParent: {fileID: 603249876}
+  levelBackgroundFactory:
+    parameters:
+      m_startPositionY: 19
+      m_endPositionY: -38
+      m_movingSpeedY: 2
+    myTransform: {fileID: 8010320557783749713}
 --- !u!212 &4162873433806880330
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2874,22 +2879,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &4852396043583267082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 61006797492197339}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5377a5d4caa94482972174d0a74ac4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_params:
-    m_startPositionY: 19
-    m_endPositionY: -38
-    m_movingSpeedY: 5
 --- !u!1 &4914023371208914563
 GameObject:
   m_ObjectHideFlags: 0

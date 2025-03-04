@@ -13,12 +13,14 @@ namespace ShootEmUp
         [SerializeField] private StartGameTimerFactory startGameTimerFactory;
         [SerializeField] private BulletSystemFactory bulletSystemFactory;
         [SerializeField] private EnemySystemFactory enemySystemFactory;
+        [SerializeField] private LevelBackgroundFactory levelBackgroundFactory;
 
         protected override void Configure(IContainerBuilder builder)
         {
             startGameTimerFactory.Register(builder);
             bulletSystemFactory.Register(builder);
             enemySystemFactory.Register(builder);
+            levelBackgroundFactory.Register(builder);
 
             builder.Register<GameFinalizator>(Lifetime.Singleton)
                 .AsImplementedInterfaces();
