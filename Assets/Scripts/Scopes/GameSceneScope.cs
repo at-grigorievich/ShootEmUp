@@ -25,7 +25,8 @@ namespace ShootEmUp
             builder.Register<GameFinalizator>(Lifetime.Singleton)
                 .AsImplementedInterfaces();
             
-            builder.Register<GameCycleListenersDispatcher>(Lifetime.Singleton);
+            builder.Register<GameCycleListenersDispatcher>(Lifetime.Singleton)
+                .AsSelf().AsImplementedInterfaces();
             
             builder.Register<InputService>(Lifetime.Singleton)
                 .AsSelf().AsImplementedInterfaces();

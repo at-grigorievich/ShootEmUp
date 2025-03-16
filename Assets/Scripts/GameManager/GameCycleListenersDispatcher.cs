@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ShootEmUp
 {
-    public sealed class GameCycleListenersDispatcher
+    public sealed class GameCycleListenersDispatcher: IDisposable
     {
         public readonly HashSet<IUserInputListener> UserInputListeners;
         public readonly HashSet<IStartGameListener> StartGameListeners;
@@ -56,6 +57,49 @@ namespace ShootEmUp
             {
                 FinishGameListeners.Add(finishGameListener);
             }
+        }
+
+        public void RemoveListener(object src)
+        {
+            if (src is IUserInputListener userInputListener)
+            {
+                UserInputListeners.Remove(userInputListener);
+            }
+
+            if (src is IStartGameListener startGameListener)
+            {
+                StartGameListeners.Remove(startGameListener);
+            }
+
+            if (src is IUpdateGameListener updateGameListener)
+            {
+                UpdateGameListeners.Remove(updateGameListener);
+            }
+
+            if (src is IFixedUpdateGameListener fixedUpdateGameListener)
+            {
+                FixedUpdateGameListeners.Remove(fixedUpdateGameListener);
+            }
+
+            if (src is IPauseGameListener pauseGameListener)
+            {
+                PauseGameListeners.Remove(pauseGameListener);
+            }
+
+            if (src is IFinishGameListener finishGameListener)
+            {
+                FinishGameListeners.Remove(finishGameListener);
+            }
+        }
+
+        public void Dispose()
+        {
+            UserInputListeners.Clear();
+            StartGameListeners.Clear();
+            UpdateGameListeners.Clear();
+            FixedUpdateGameListeners.Clear();
+            PauseGameListeners.Clear();
+            FinishGameListeners.Clear();
         }
     }
 }

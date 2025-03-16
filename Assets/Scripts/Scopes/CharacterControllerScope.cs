@@ -41,6 +41,16 @@ namespace ShootEmUp
                 listenersDispatcher.AddListener(characterController);
                 enemySystem.SetTarget(characterController);
             });
+            
+            builder.RegisterDisposeCallback(container =>
+            {
+                var characterController = container.Resolve<CharacterController>();
+                var listenersDispatcher = container.Resolve<GameCycleListenersDispatcher>();
+                var enemySystem = container.Resolve<EnemySystem>();
+                
+                listenersDispatcher.RemoveListener(characterController);
+                enemySystem.SetTarget(null);
+            });
         }
     }
 }
